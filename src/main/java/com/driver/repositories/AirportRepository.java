@@ -53,13 +53,25 @@ public class AirportRepository {
     }
 
     public String bookATicket(Integer flightId, Integer passengerId) {
-        if(flightDb.get(flightId).getMaxCapacity() == flightPassengerDb.get(flightId).size())
-            return "FAILURE";
-        for(Integer currPassengerId: flightPassengerDb.get(flightId)){
-            if(Objects.equals(currPassengerId, passengerId)) return "FAILURE";
+        if(flightPassengerDb.get(flightId)!=null
+                && (flightPassengerDb.get(flightId).size() < flightDb.get(flightId).getMaxCapacity())){
+            List<Integer> passengers =  flightPassengerDb.get(flightId);
+            if(passengers.contains(passengerId)) return "FAILURE";
+            passengers.add(passengerId);
+            flightPassengerDb.put(flightId,passengers);
+            return "SUCCESS";
         }
-        flightPassengerDb.get(flightId).add(passengerId);
-        return "SUCCESS";
+        else if(flightPassengerDb.get(flightId)==null) {
+            flightPassengerDb.put(flightId,new ArrayList<>());
+            List<Integer> passengers =  flightPassengerDb.get(flightId);
+            if(passengers.contains(passengerId)){
+                return "FAILURE";
+            }
+            passengers.add(passengerId);
+            flightPassengerDb.put(flightId,passengers);
+            return "SUCCESS";
+        }
+        return "FAILURE";
     }
 
     public String cancelATicket(Integer flightId, Integer passengerId) {
