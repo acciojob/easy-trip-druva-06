@@ -63,22 +63,13 @@ public class AirportRepository {
     }
 
     public String cancelATicket(Integer flightId, Integer passengerId) {
-        if(!flightPassengerDb.containsKey(flightId)) return "FAILURE";
-        boolean flightBooked = false;
-        for(Integer currPassengerId: flightPassengerDb.get(flightId)){
-            if (Objects.equals(currPassengerId, passengerId)) {
-                flightBooked = true;
-                break;
-            }
+        List<Integer> passengers = flightPassengerDb.get(flightId);
+        if(passengers == null) return "FAILURE";
+        if(passengers.contains(passengerId)){
+            passengers.remove(passengerId);
+            return "SUCCESS";
         }
-        if(!flightBooked) return "FAILURE";
-        for(int i=0;i<flightPassengerDb.get(flightId).size();i++){
-            if(Objects.equals(flightPassengerDb.get(flightId).get(i), passengerId)){
-                flightPassengerDb.get(flightId).remove(i);
-                break;
-            }
-        }
-        return "SUCCESS";
+        return "FAILURE";
     }
 
     public int countOfBookingsDoneByPassengerAllCombined(Integer passengerId) {
