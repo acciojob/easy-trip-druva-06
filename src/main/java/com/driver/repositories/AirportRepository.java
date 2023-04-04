@@ -49,7 +49,7 @@ public class AirportRepository {
                 mn = Math.min(mn,flight.getDuration());
             }
         }
-        return mn;
+        return mn!=Integer.MAX_VALUE?mn:-1;
     }
 
     public String bookATicket(Integer flightId, Integer passengerId) {
@@ -96,10 +96,11 @@ public class AirportRepository {
         City city = airportDb.get(airportName).getCity();
         for(Integer flightId: flightPassengerDb.keySet()){
             Flight flight = flightDb.get(flightId);
-            if(flight.getFlightDate().compareTo(date) == 0
-                    && flight.getFromCity().equals(city)
-                    && flight.getToCity().equals(city)){
-                totPeopleCount+=flightPassengerDb.get(flightId).size();
+            if(flight.getFlightDate().compareTo(date) == 0) {
+                if (flight.getFromCity().equals(city)
+                        || flight.getToCity().equals(city)) {
+                    totPeopleCount += flightPassengerDb.get(flightId).size();
+                }
             }
         }
         return totPeopleCount;
@@ -111,7 +112,7 @@ public class AirportRepository {
 
     public int calculateRevenueOfAFlight(Integer flightId) {
         int totNoOfPassengers = flightPassengerDb.get(flightId).size();
-        return (3000*totNoOfPassengers)*(50*(totNoOfPassengers*(totNoOfPassengers+1))/2);
+        return (3000*totNoOfPassengers)+(50*(totNoOfPassengers*(totNoOfPassengers+1))/2);
     }
 
     public String getAirportNameFromFlightId(Integer flightId) {
